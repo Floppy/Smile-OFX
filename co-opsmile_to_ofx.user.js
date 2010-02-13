@@ -1,8 +1,8 @@
 // ==UserScript==
-// Version: 4.1 - 30/06/2007
+// Version: 5.0 - 13/02/2010
 // @name            Co-op/Smile to OFX
 // @description    	UNOFFICIAL script to convert co-op and smile bank statements and co-op credit card statements into CSV and OFX files
-// @namespace		http://userscripts.org/scripts/show/6976
+// @namespace		    https://gist.github.com/5cbb37e2a6003d470c47
 // @include         https://welcome22.smile.co.uk/SmileWeb/getDomesticStatementPage.do*
 // @include         https://welcome22.smile.co.uk/SmileWeb/paginateDomesticStatement.do*
 // @include         https://welcome23.smile.co.uk/SmileWeb/getDomesticStatementPage.do*
@@ -20,7 +20,9 @@
 // @include         https://welcome27.co-operativebank.co.uk/CBIBSWeb/getVisaStatementPage.do*
 // @include         https://welcome27.co-operativebank.co.uk/CBIBSWeb/visaStatements.do*
 // ==/UserScript==
-//N.B. Many thanks to Michael Vandercamp on who's script (http://userscripts.org/scripts/show/3420) this is heavily based
+
+// Based on http://userscripts.org/scripts/show/6976, which was in turn based on http://userscripts.org/scripts/show/3420
+
 
 var trs = document.evaluate("//tr", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null); 
 var CSV = "";
