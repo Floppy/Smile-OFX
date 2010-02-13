@@ -41,7 +41,7 @@ var tableWidth = 11;
 
 if (windowURL.indexOf("smile.co.uk") > 0) 
 {
-	startRow = 35;
+	startRow = 34;
 	buttonRow = 31;
 	sortCode = trs.snapshotItem(22).childNodes[3].textContent;
 	accountNumber = trs.snapshotItem(21).childNodes[3].textContent;	
