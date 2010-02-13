@@ -159,6 +159,8 @@ for(i=1;i<=transCount;i++)
 	OFX += statsArrayOFX[i];
 }
 
+OFX += footerXML();
+
 GM_log(OFX);
 
 GM_log(CSV);
@@ -394,6 +396,10 @@ function header2XML(_start,_end)
 	return headerXML;
 }
 
+function footerXML()
+{
+	return '</BANKTRANLIST></STMTRS></STMTTRNRS></BANKMSGSRSV1></OFX>';
+}
 
 function wOFX()
 {
