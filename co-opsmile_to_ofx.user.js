@@ -139,7 +139,7 @@ for (i = startRow;trs.snapshotItem(i).childNodes.length == tableWidth;i++)
 	}
 	
 //alert(transCount+", "+date+", "+transaction+", "+deposit+", "+withdrawal);	
-	statsArrayOFX[transCount] = lineToOFX(date,deposit,withdrawal*-1,transaction);
+	statsArrayOFX[transCount] = lineToOFX(date,deposit,withdrawal*-1,transaction,transCount);
 	CSV += date +","+ transaction +","+ deposit +","+ withdrawal +","+ balance + "\n";
 	
 	if (i == startRow)
@@ -259,7 +259,7 @@ function fixBalance(balanceIn)
 }
 
 
-function lineToOFX(dateIN,dep,withd,trans)
+function lineToOFX(dateIN,dep,withd,trans,transCount)
 {
 	var transactionXML = '';
 	
@@ -289,7 +289,7 @@ function lineToOFX(dateIN,dep,withd,trans)
 	transactionXML += "\n";
 	
 	transactionXML += '<FITID>';
-	transactionXML += dateIN.substring(6,10) + dateIN.substring(3,5) + dateIN.substring(0,2) + '000000';
+	transactionXML += dateIN.substring(6,10) + dateIN.substring(3,5) + dateIN.substring(0,2) + '000000' + transCount;
 	transactionXML += '</FITID>';
 	transactionXML += "\n";
 	
