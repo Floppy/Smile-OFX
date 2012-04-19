@@ -39,18 +39,28 @@ var transCount = 0;
 var OFX;
 var startRow;
 var buttonRow;
+var accountInfoRow;
 var windowURL = window.location.href;
 var noBalance = new Boolean(false);
 var tableWidth = 11;
 
 if (windowURL.indexOf("smile.co.uk") > 0) 
 {
-	startRow = 34;
-	buttonRow = 31;
-	sortCode = trs.snapshotItem(22).childNodes[3].textContent;
-	accountNumber = trs.snapshotItem(21).childNodes[3].textContent;	
-	statementDate = parseDate(trs.snapshotItem(24).childNodes[3].textContent);
-
+	// Find important parts of the page
+	for (i=0; i<trs.snapshotLength; i++) {
+		if (trs.snapshotItem(i).textContent.indexOf("account number") == 9) {
+			accountInfoRow = i;
+			buttonRow = accountInfoRow-3;
+		}
+		if (trs.snapshotItem(i).textContent.indexOf("money in") == 78) {
+			startRow = i+1;
+		}
+	}
+	sortCode = trs.snapshotItem(accountInfoRow+1).childNodes[3].textContent.trim();
+	accountNumber = trs.snapshotItem(accountInfoRow).childNodes[3].textContent.trim();	
+	statementDate = parseDate(trs.snapshotItem(accountInfoRow+2).childNodes[3].textContent);
+	alert(trs.snapshotItem(startRow).textContent);
+	
 } else if (windowURL.indexOf("co-operativebank.co.uk") > 0)
 {
 	if (windowURL.toLowerCase().indexOf("visastatement") > 0)
