@@ -59,7 +59,6 @@ if (windowURL.indexOf("smile.co.uk") > 0)
 	sortCode = trs.snapshotItem(accountInfoRow+1).childNodes[3].textContent.trim();
 	accountNumber = trs.snapshotItem(accountInfoRow).childNodes[3].textContent.trim();	
 	statementDate = parseDate(trs.snapshotItem(accountInfoRow+2).childNodes[3].textContent);
-	alert(trs.snapshotItem(startRow).textContent);
 	
 } else if (windowURL.indexOf("co-operativebank.co.uk") > 0)
 {
