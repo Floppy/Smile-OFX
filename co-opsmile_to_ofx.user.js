@@ -21,12 +21,14 @@
 // @include         https://welcome27.co-operativebank.co.uk/CBIBSWeb/paginateDomesticStatement.do*
 // @include         https://welcome27.co-operativebank.co.uk/CBIBSWeb/getVisaStatementPage.do*
 // @include         https://welcome27.co-operativebank.co.uk/CBIBSWeb/visaStatements.do*
+// @grant           GM_log
+// @grant           GM_setClipboard
 // ==/UserScript==
 
 // Based on http://userscripts.org/scripts/show/6976, which was in turn based on http://userscripts.org/scripts/show/3420
 
 
-var trs = document.evaluate("//tr", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null); 
+var trs = document.evaluate("//tr", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
 var CSV = "";
 var i = 0;
 var j = 0;
@@ -44,7 +46,7 @@ var windowURL = window.location.href;
 var noBalance = new Boolean(false);
 var tableWidth = 11;
 
-if (windowURL.indexOf("smile.co.uk") > 0) 
+if (windowURL.indexOf("smile.co.uk") > 0)
 {
 	// Find important parts of the page
 	for (i=0; i<trs.snapshotLength; i++) {
@@ -57,31 +59,31 @@ if (windowURL.indexOf("smile.co.uk") > 0)
 		}
 	}
 	sortCode = trs.snapshotItem(accountInfoRow+1).childNodes[3].textContent.trim();
-	accountNumber = trs.snapshotItem(accountInfoRow).childNodes[3].textContent.trim();	
+	accountNumber = trs.snapshotItem(accountInfoRow).childNodes[3].textContent.trim();
 	statementDate = parseDate(trs.snapshotItem(accountInfoRow+2).childNodes[3].textContent);
-	
+
 } else if (windowURL.indexOf("co-operativebank.co.uk") > 0)
 {
 	if (windowURL.toLowerCase().indexOf("visastatement") > 0)
 	{
 		startRow = 30;
 		buttonRow = 26;
-		
+
 		//first page is different
-		if (windowURL.indexOf("visaPage=1") > 0 || windowURL.indexOf("visaStatements.do") > 0) 
+		if (windowURL.indexOf("visaPage=1") > 0 || windowURL.indexOf("visaStatements.do") > 0)
 		{
 			startRow = 35;
 			buttonRow = 30;
 		}
-		
+
 		tableWidth = 9;
 		sortCode = "";
 		accountNumber = parseCreditCardNumber(document.getElementsByTagName("TABLE")[7].rows[1].cells[0].innerHTML);
 		statementDate = parseDate(document.getElementsByTagName("TABLE")[9].rows[0].cells[1].innerHTML);
 		noBalance = new Boolean(true);
-	} 
+	}
 	// current live bank statement
-	else if (windowURL.indexOf("balances") > 0 || windowURL.indexOf("domesticRecentItems") > 0) 
+	else if (windowURL.indexOf("balances") > 0 || windowURL.indexOf("domesticRecentItems") > 0)
 	{
 		tableWidth = 9;
 		startRow = 25;
@@ -124,7 +126,7 @@ for (i = startRow;trs.snapshotItem(i).childNodes.length == tableWidth;i++)
 	{
 		deposit = deposit.substring(1);
 	}
-	
+
 	if (withdrawal == "&nbsp;")
 	{
 		withdrawal = '';
@@ -133,7 +135,7 @@ for (i = startRow;trs.snapshotItem(i).childNodes.length == tableWidth;i++)
 	{
 		withdrawal = withdrawal.substring(1);
 	}
-	
+
 	if (noBalance == true)
 	{
 		balance = '';
@@ -147,19 +149,19 @@ for (i = startRow;trs.snapshotItem(i).childNodes.length == tableWidth;i++)
 		{
 			balance = balance.substring(1);
 			balance = fixBalance(balance);
-		
+
 		}
 	}
-	
-//alert(transCount+", "+date+", "+transaction+", "+deposit+", "+withdrawal);	
+
+//alert(transCount+", "+date+", "+transaction+", "+deposit+", "+withdrawal);
 	statsArrayOFX[transCount] = lineToOFX(date,deposit,withdrawal*-1,transaction,transCount);
 	CSV += date +","+ transaction +","+ deposit +","+ withdrawal +","+ balance + "\n";
-	
+
 	if (i == startRow)
 	{
 		statementFrom = date ;
 	}
-	
+
 	statementTo = date;
 
 }
@@ -213,9 +215,9 @@ function createCSVButton(target, func, title, width, height, src) {
     button._target = target;
     button.title = title;
     button.href = '#';
-   
+
     button.appendChild(img);
-	
+
 	button.addEventListener('click',
                            function(e) { wCSV() ; },
                            false);
@@ -234,9 +236,9 @@ function createOFXButton(target, func, title, width, height, src) {
     button._target = target;
     button.title = title;
     button.href = '#';
-   
+
     button.appendChild(img);
-	
+
 	button.addEventListener('click',
                            function(e) { wOFX() ; },
                            false);
@@ -245,7 +247,7 @@ function createOFXButton(target, func, title, width, height, src) {
 
 
 // trim whitespace at the beginning, end and multiple occurences in the middle
-function trimString(str) 
+function trimString(str)
 {
 	str = str.replace(new RegExp(/^\s+/),""); // START WHITESPACES
 	str = str.replace(new RegExp(/\s+$/),""); // END WHITESPACES
@@ -258,13 +260,13 @@ function fixBalance(balanceIn)
 {
 	var balanceSplit = new Array();
 	balanceSplit = balanceIn.split(' ');
-	
+
 	if (balanceSplit[1] == 'DR')
 	{
 		return (balanceSplit[0] * -1);
-	
+
 	}
-	else 
+	else
 	{
 		return balanceSplit[0];
 	}
@@ -275,9 +277,9 @@ function fixBalance(balanceIn)
 function lineToOFX(dateIN,dep,withd,trans,transCount)
 {
 	var transactionXML = '';
-	
+
 	transactionXML += '<STMTTRN>' + "\n";
-	
+
 	transactionXML += '<TRNTYPE>';
 	if (dep != '')
 	{
@@ -289,35 +291,35 @@ function lineToOFX(dateIN,dep,withd,trans,transCount)
 	}
 	transactionXML += '</TRNTYPE>';
 	transactionXML += "\n";
-	
+
 	transactionXML += '<DTPOSTED>';
 	transactionXML += dateIN.substring(6,10) + dateIN.substring(3,5) + dateIN.substring(0,2) + '000000';
 	transactionXML += '</DTPOSTED>';
 	transactionXML += "\n";
-	
+
 	transactionXML += '<TRNAMT>';
 	var amount = new Number(dep + withd);
 	transactionXML += amount.toFixed(2);
 	transactionXML += '</TRNAMT>';
 	transactionXML += "\n";
-	
+
 	transactionXML += '<FITID>';
 	transactionXML += dateIN.substring(6,10) + dateIN.substring(3,5) + dateIN.substring(0,2) + '000000' + transCount;
 	transactionXML += '</FITID>';
 	transactionXML += "\n";
-	
+
 	transactionXML += '<NAME>';
 	transactionXML += trans;
 	transactionXML += '</NAME>';
 	transactionXML += "\n";
-	
+
 	transactionXML += '<MEMO>';
 	transactionXML += trans;
 	transactionXML += '</MEMO>';
 	transactionXML += "\n";
-	
+
 	transactionXML += '</STMTTRN>' + "\n";
-	
+
 	return transactionXML;
 }
 
@@ -326,7 +328,7 @@ function parseSortCode(str)
 {
 	var _sortCode = str.match(  (/\d\d-\d\d-\d\d/ ))
 	return _sortCode[0];
-	
+
 }
 
 
@@ -334,7 +336,7 @@ function parseAccountNumber(str)
 {
 	var _accountNumber = str.match(  (/\d\d\d\d\d\d\d\d/ ) )
 	return _accountNumber[0];
-	
+
 }
 
 
@@ -342,7 +344,7 @@ function parseCreditCardNumber(str)
 {
 	var _accountNumber = str.match(  (/\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d/ ) )
 	return _accountNumber[0];
-	
+
 }
 
 
@@ -355,9 +357,9 @@ function parseDate(str)
 
 function header1XML(_sortCode,_accountNumber)
 {
-	
+
 	var dateTimeNow = new Date();
-	
+
 	var headerXML = ''
 	headerXML += "OFXHEADER:100\nDATA:OFXSGML\nVERSION:102\nSECURITY:NONE\nENCODING:USASCII\nCHARSET:1252\nCOMPRESSION:NONE\nOLDFILEUID:NONE\nNEWFILEUID:NONE\n\n";
 	headerXML += "<OFX>\n<SIGNONMSGSRSV1>\n<SONRS>\n<STATUS>\n<CODE>0</CODE>\n<SEVERITY>INFO</SEVERITY>\n</STATUS>";
@@ -370,23 +372,23 @@ function header1XML(_sortCode,_accountNumber)
 	headerXML += "</BANKID><ACCTID>";
 	headerXML += _accountNumber;
 	headerXML += "</ACCTID><ACCTTYPE>CHECKING</ACCTTYPE>\n</BANKACCTFROM>\n\n";
-	
+
 	return headerXML;
 }
 
 
 function fixDate(_date)
 {
-	
+
 	var temp,_year,_month,_day,_hour,_minute,_second;
-			
+
 	_year = _date.getFullYear();
 	_month = _date.getMonth() + 1;
 	_day = _date.getDate();
 	_hour = _date.getHours();
 	_minute = _date.getMinutes();
 	_second = _date.getSeconds();
-	
+
 	temp =  _year;
 	temp += ((_month < 10) ? "0" : "") + _month;
 	temp += ((_day < 10) ? "0" : "") + _day;
@@ -405,7 +407,7 @@ function header2XML(_start,_end)
 	headerXML += "</DTSTART><DTEND>";
 	headerXML += _end;
 	headerXML += "</DTEND>\n";
-	
+
 	return headerXML;
 }
 
@@ -416,17 +418,13 @@ function footerXML()
 
 function wOFX()
 {
-	OpenWindow=window.open("", "newwin", "height=700, width=500,resizable=yes,scrollbars=yes,toolbar=no,menubar=yes");
-	OpenWindow.document.open("text/plain", "replace");
-	OpenWindow.document.write(OFX)
-	OpenWindow.document.close();
+    GM_setClipboard(OFX);
+    alert("OFX data copied to clipboard");
 }
 
 
 function wCSV()
 {
-	OpenWindow=window.open("", "newwin", "height=700, width=500,resizable=yes,scrollbars=yes,toolbar=no,menubar=yes");
-	OpenWindow.document.open("text/plain", "replace");
-	OpenWindow.document.write(CSV)
-	OpenWindow.document.close();
+    GM_setClipboard(CSV);
+    alert("CSV data copied to clipboard");
 }
