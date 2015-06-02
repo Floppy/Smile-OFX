@@ -50,7 +50,7 @@ if (windowURL.indexOf("smile.co.uk") > 0)
 {
 	// Find important parts of the page
 	for (i=0; i<trs.snapshotLength; i++) {
-		if (trs.snapshotItem(i).textContent.indexOf("account number") == 9) {
+		if (trs.snapshotItem(i).textContent.indexOf("account number") == 15) {
 			accountInfoRow = i;
 			buttonRow = accountInfoRow-3;
 		}
